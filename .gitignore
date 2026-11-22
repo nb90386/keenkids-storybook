@@ -1,0 +1,27 @@
+node_modules
+.next
+.vercel
+.env*
+test-results
+playwright-report
+*.tsbuildinfo
+next-env.d.ts
+.DS_Store
+
+# Unblurred originals: never commit or deploy
+source-assets/
+.impeccable/review/
+
+# Local Claude settings and Impeccable working files
+.claude/settings.local.json
+.claude/.cc-writes/
+.impeccable/mocks/
+.impeccable/build/
+.vercel
+
+# Local recovery snapshots
+.snapshots/
+
+# Unblurred crops for local private review only
+public/images-clear/
+.pw-tmp/

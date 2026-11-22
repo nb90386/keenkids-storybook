@@ -1,0 +1,15 @@
+# Unblurred originals: never deploy
+source-assets
+# Local tooling and review artifacts
+.claude
+.impeccable
+.next
+node_modules
+.env*
+docs/screenshots
+tests
+test-results
+playwright-report
+.snapshots
+public/images-clear
+.pw-tmp

@@ -1,0 +1,643 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* ------------------------------------------------------------------ *
+ * KeenKids Storybook — design tokens
+ * Evergreen bookcloth outside, warm paper inside. See docs/DESIGN_SYSTEM.md
+ * ------------------------------------------------------------------ */
+
+@theme {
+  /* V2: one tonal family — ivory paper, evergreen cloth, charcoal ink, antique gold, earthy red */
+  --color-paper: #fffdf8;
+  --color-parchment: #f8f4ea; /* warm ivory page */
+  --color-parchment-deep: #eee7d8;
+  --color-ink: #2a2d29; /* gentle charcoal */
+  --color-ink-soft: #4d524b; /* 7.4:1 on ivory */
+  --color-ink-faint: #676b63; /* 5.0:1 on ivory — captions, labels */
+  --color-evergreen: #23453a;
+  --color-evergreen-deep: #172f26;
+  --color-evergreen-soft: #3b5d50;
+  --color-gold: #c9a05a; /* antique gold: foil on cloth only */
+  --color-gold-soft: #e2c48e;
+  --color-terracotta: #b5654e; /* muted earthy red */
+  --color-terracotta-ink: #97462f; /* 5.9:1 on paper */
+  --color-sage: #dde3d6;
+  --color-sage-deep: #c6d0bd;
+  --color-rule: #e2dbcd;
+  --color-rule-strong: #cbc2b0;
+
+  --font-serif: var(--font-serif-face), "Iowan Old Style", Georgia, serif;
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  /* transitions.dev surface easing, used for open/close and swaps */
+  --ease-smooth-out: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --shadow-plate: 0 1px 1px rgb(40 44 38 / 0.06), 0 6px 14px -6px rgb(40 44 38 / 0.18),
+    0 22px 40px -24px rgb(40 44 38 / 0.28);
+  --shadow-card: 0 1px 0 rgb(40 44 38 / 0.04), 0 10px 24px -14px rgb(40 44 38 / 0.22);
+  --shadow-lift: 0 2px 2px rgb(40 44 38 / 0.05), 0 18px 36px -18px rgb(40 44 38 / 0.32);
+}
+
+/* shadcn/ui semantic variables, mapped onto the storybook palette */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: 3px;
+  --radius-md: 5px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+  --font-heading: var(--font-serif);
+}
+
+:root {
+  --background: #f7f3e9;
+  --foreground: #282c26;
+  --primary: #254638;
+  --primary-foreground: #fffcf5;
+  --secondary: #efe9da;
+  --secondary-foreground: #282c26;
+  --muted: #efe9da;
+  --muted-foreground: #4f554c;
+  --accent: #d8dfd2;
+  --accent-foreground: #254638;
+  --popover: #fffcf5;
+  --popover-foreground: #282c26;
+  --card: #fffcf5;
+  --card-foreground: #282c26;
+  --destructive: #a3412e;
+  --border: #ddd7cb;
+  --input: #c9c1b1;
+  --ring: #254638;
+  --radius: 5px;
+
+  /* Layout */
+  --gutter: clamp(1.25rem, 4.2vw, 3rem);
+  --measure: 34rem;
+  --header-h: 4rem;
+  --section-y: clamp(4.5rem, 2.5rem + 7vw, 9rem);
+
+  /* An almost imperceptible paper grain */
+  --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .17 0 0 0 0 .15 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ------------------------------------------------------------------ *
+ * Base
+ * ------------------------------------------------------------------ */
+
+@layer base {
+  *,
+  ::before,
+  ::after {
+    border-color: var(--color-rule);
+  }
+
+  html,
+  body {
+    overflow-x: clip;
+  }
+
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+    scroll-padding-top: calc(var(--header-h) + 1.5rem);
+    scrollbar-color: var(--color-rule-strong) var(--color-parchment);
+    background: var(--color-evergreen-deep);
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    html {
+      scroll-behavior: smooth;
+    }
+  }
+
+  body {
+    background-color: var(--color-parchment);
+    background-image: var(--grain);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: 1.0625rem;
+    line-height: 1.6;
+    font-feature-settings: "kern", "liga";
+    caret-color: var(--color-evergreen);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    font-family: var(--font-serif);
+    font-optical-sizing: auto;
+    font-weight: 500;
+    text-wrap: balance;
+    color: inherit;
+  }
+
+  p,
+  li,
+  dd,
+  blockquote {
+    text-wrap: pretty;
+  }
+
+  a {
+    text-underline-offset: 0.22em;
+    text-decoration-thickness: 1px;
+  }
+
+  ::selection {
+    background: var(--color-sage-deep);
+    color: var(--color-evergreen-deep);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--color-evergreen);
+    outline-offset: 3px;
+    border-radius: 3px;
+  }
+
+  .on-cloth :focus-visible {
+    outline-color: var(--color-gold);
+  }
+
+  input,
+  textarea,
+  select {
+    caret-color: var(--color-evergreen);
+  }
+
+  img {
+    -webkit-user-drag: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Type
+ * ------------------------------------------------------------------ */
+
+@utility t-display {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(2.75rem, 1.5rem + 4.6vw, 5.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.028em;
+}
+
+/* Section openers: a step below display, with a tighter, more literary set */
+@utility t-chapter {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(2.25rem, 1.55rem + 2.8vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.024em;
+}
+
+@utility t-title {
+  font-family: var(--font-serif);
+  font-weight: 500;
+  font-size: clamp(2rem, 1.45rem + 2.2vw, 3.25rem);
+  line-height: 1.06;
+  letter-spacing: -0.018em;
+}
+
+@utility t-heading {
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-size: clamp(1.5rem, 1.25rem + 1vw, 2.125rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+@utility t-subheading {
+  font-family: var(--font-serif);
+  font-weight: 520;
+  font-size: clamp(1.1875rem, 1.1rem + 0.35vw, 1.375rem);
+  line-height: 1.3;
+}
+
+@utility t-lede {
+  font-size: clamp(1.125rem, 1.05rem + 0.35vw, 1.3125rem);
+  line-height: 1.55;
+}
+
+@utility t-small {
+  font-size: 0.9375rem;
+  line-height: 1.55;
+}
+
+@utility t-caption {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 0.9375rem;
+  line-height: 1.45;
+}
+
+@utility t-label {
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1.3;
+}
+
+@utility tabular {
+  font-variant-numeric: tabular-nums lining-nums;
+}
+
+/* ------------------------------------------------------------------ *
+ * Layout
+ * ------------------------------------------------------------------ */
+
+@utility shell {
+  width: 100%;
+  max-width: 82rem;
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+}
+
+@utility section-y {
+  padding-block: var(--section-y);
+}
+
+/* ------------------------------------------------------------------ *
+ * Materials
+ * ------------------------------------------------------------------ */
+
+/* Evergreen bookcloth: a fine woven texture at very low contrast */
+@utility cloth {
+  background-color: var(--color-evergreen);
+  background-image:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.035) 0 1px, transparent 1px 3px),
+    radial-gradient(120% 80% at 20% 0%, rgb(255 255 255 / 0.05), transparent 60%);
+  color: var(--color-paper);
+}
+
+@utility paper {
+  background-color: var(--color-paper);
+  background-image: var(--grain);
+}
+
+/* Gold foil stamping: flat gold, a hairline deboss */
+@utility foil {
+  color: var(--color-gold);
+  text-shadow: 0 1px 0 rgb(0 0 0 / 0.22);
+}
+
+/* Fine rules */
+@utility rule-t {
+  border-top: 1px solid var(--color-rule);
+}
+
+@utility rule-b {
+  border-bottom: 1px solid var(--color-rule);
+}
+
+/* Dot leaders for tables of contents */
+@utility leader {
+  flex: 1 1 auto;
+  min-width: 1.5rem;
+  align-self: baseline;
+  height: 0;
+  border-bottom: 1.5px dotted var(--color-rule-strong);
+  transform: translateY(-0.28em);
+}
+
+/* ------------------------------------------------------------------ *
+ * Motion
+ * ------------------------------------------------------------------ */
+
+/* Cover entrance. Plays once on load, never waits for scroll. */
+/* No opacity: the cover's words are readable from the first frame and stay LCP-eligible. */
+@keyframes rise-in {
+  from {
+    transform: translateY(12px);
+    filter: blur(4px);
+  }
+}
+
+/* School card swap: 250ms in, transitions.dev surface easing, 2px blur. */
+@keyframes panel-swap {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+    filter: blur(2px);
+  }
+}
+
+@keyframes plate-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px) rotate(-0.6deg);
+    clip-path: inset(0 0 12% 0);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .enter {
+    animation: rise-in 720ms var(--ease-out-expo) both;
+    animation-delay: calc(var(--i, 0) * 60ms + 60ms);
+  }
+  .enter-plate {
+    animation: plate-in 900ms var(--ease-out-expo) 220ms both;
+  }
+  .panel-swap {
+    animation: panel-swap 250ms var(--ease-smooth-out) both;
+  }
+
+  /* Photographs settle into place as they enter the viewport. Progressive:
+     browsers without scroll-driven animations simply show the image. */
+  @supports (animation-timeline: view()) {
+    .reveal-plate {
+      animation: plate-in linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 55%;
+    }
+  }
+}
+
+/* Silk ribbon bookmark with a notched tail */
+@utility ribbon {
+  background:
+    linear-gradient(90deg, rgb(255 255 255 / 0.16) 0 1px, transparent 1px calc(100% - 1px), rgb(0 0 0 / 0.12) calc(100% - 1px)),
+    linear-gradient(180deg, #a86c58, var(--color-terracotta) 70%, #c48a76);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% calc(100% - 7px), 0 100%);
+  filter: drop-shadow(0 1px 1px rgb(40 44 38 / 0.25));
+}
+
+@keyframes ribbon-drop {
+  from {
+    transform: translateY(-3rem);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .ribbon-drop {
+    animation: ribbon-drop 900ms var(--ease-out-expo) both;
+  }
+}
+
+/* Links that read as text with an evergreen underline drawn in on hover */
+@utility link-ink {
+  text-decoration-line: underline;
+  text-decoration-color: color-mix(in oklab, currentColor 35%, transparent);
+  transition: text-decoration-color 180ms ease;
+  &:hover {
+    text-decoration-color: currentColor;
+  }
+}
+
+/* Reduced motion: overlays keep their fade but drop the slide and zoom. */
+@media (prefers-reduced-motion: reduce) {
+  [data-slot="sheet-content"],
+  [data-slot="dialog-content"] {
+    --tw-enter-translate-x: 0;
+    --tw-enter-translate-y: 0;
+    --tw-exit-translate-x: 0;
+    --tw-exit-translate-y: 0;
+    --tw-enter-scale: 1;
+    --tw-exit-scale: 1;
+  }
+}
+
+/* Route transitions (React <ViewTransition default="page">) */
+@keyframes page-out {
+  to {
+    opacity: 0;
+  }
+}
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+}
+::view-transition-old(.page) {
+  animation: page-out 140ms ease-out both;
+}
+::view-transition-new(.page) {
+  animation: page-in 300ms var(--ease-smooth-out) both;
+}
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(.page),
+  ::view-transition-new(.page) {
+    animation-duration: 1ms;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * V2 · Cover window, opening sequence, dust motes
+ * ------------------------------------------------------------------ */
+
+/* An arched window die-cut through the cloth board. Light comes from the upper left,
+   so the cut's upper edge is in shadow and the lower edge catches a thin highlight. */
+.cover-window {
+  border-radius: 999px 999px 10px 10px / 999px 999px 10px 10px;
+  border-radius: min(18rem, 50%) min(18rem, 50%) 10px 10px;
+  box-shadow:
+    inset 0 10px 18px -8px rgb(0 0 0 / 0.55),
+    inset 0 -1px 0 rgb(255 255 255 / 0.18),
+    0 1px 0 rgb(255 255 255 / 0.08),
+    0 30px 60px -36px rgb(0 0 0 / 0.7);
+  background: var(--color-evergreen-deep);
+}
+.cover-window::after {
+  /* the board's thickness: a fine bevel line just inside the cut */
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 0.22), inset 0 2px 0 1px rgb(0 0 0 / 0.12);
+  pointer-events: none;
+}
+
+.motes .mote {
+  position: absolute;
+  border-radius: 999px;
+  background: rgb(255 244 222 / 0.75);
+  box-shadow: 0 0 6px 1px rgb(255 236 200 / 0.45);
+  opacity: 0;
+}
+
+@keyframes window-open {
+  from {
+    clip-path: inset(18% 8% 0 8% round 999px 999px 10px 10px);
+  }
+}
+@keyframes photo-settle {
+  from {
+    transform: scale(1.07);
+  }
+}
+@keyframes mote-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0;
+  }
+  20% {
+    opacity: 0.9;
+  }
+  80% {
+    opacity: 0.6;
+  }
+  100% {
+    transform: translate3d(var(--drift, 10px), -38px, 0);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .window-reveal {
+    animation: window-open 1100ms var(--ease-out-expo) 120ms both;
+  }
+  .window-reveal .window-photo {
+    animation: photo-settle 1600ms var(--ease-out-expo) 120ms both;
+  }
+  .motes .mote {
+    animation: mote-drift 9s ease-in-out infinite;
+  }
+  .motes[data-paused] .mote {
+    animation-play-state: paused;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .motes {
+    display: none;
+  }
+}
+
+/* A sheet of paper lifted off the page: contact shadow + ambient shadow + top edge highlight */
+.sheet {
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.9),
+    0 0 0 1px rgb(42 45 41 / 0.06),
+    0 2px 3px rgb(42 45 41 / 0.06),
+    0 18px 40px -18px rgb(23 47 38 / 0.35);
+}
+
+/* School picker: one thumb slides under the chosen school (interruptible CSS transition) */
+.picker {
+  --cols: 2;
+  --rows: 2;
+  --gap: 0.25rem;
+  --pad: 0.25rem;
+}
+@media (min-width: 768px) {
+  .picker {
+    --cols: 4;
+    --rows: 1;
+  }
+}
+.picker-thumb {
+  --x: mod(var(--i), var(--cols));
+  --y: round(down, calc(var(--i) / var(--cols)), 1);
+  position: absolute;
+  z-index: 0;
+  top: var(--pad);
+  left: var(--pad);
+  width: calc((100% - 2 * var(--pad) - (var(--cols) - 1) * var(--gap)) / var(--cols));
+  height: calc((100% - 2 * var(--pad) - (var(--rows) - 1) * var(--gap)) / var(--rows));
+  border-radius: 6px;
+  background: var(--color-evergreen);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.12), 0 6px 14px -8px rgb(23 47 38 / 0.7);
+  transform: translate(calc(var(--x) * (100% + var(--gap))), calc(var(--y) * (100% + var(--gap)))) scale(0.96);
+  opacity: 0;
+  transition:
+    transform 320ms var(--ease-smooth-out),
+    opacity 150ms ease-out;
+}
+.picker[data-chosen] .picker-thumb {
+  opacity: 1;
+  transform: translate(calc(var(--x) * (100% + var(--gap))), calc(var(--y) * (100% + var(--gap))));
+}
+@media (prefers-reduced-motion: reduce) {
+  .picker-thumb {
+    transition: opacity 150ms ease-out;
+  }
+}
+
+/* A photographic print set on the page: contact shadow, soft ambient shadow, faint top sheen */
+.print {
+  background: var(--color-parchment-deep);
+  box-shadow:
+    0 0 0 1px rgb(42 45 41 / 0.08),
+    0 1px 2px rgb(42 45 41 / 0.1),
+    0 14px 30px -18px rgb(23 47 38 / 0.45);
+}
+.print::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(170deg, rgb(255 253 248 / 0.1), transparent 35%, rgb(42 45 41 / 0.06));
+}
+.print img {
+  filter: saturate(0.9) contrast(1.02);
+}
+
+/* Images uncover from the bottom edge as they arrive (scroll-driven where supported). */
+@keyframes mask-up {
+  from {
+    clip-path: inset(14% 0 0 0);
+    transform: translateY(14px);
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .reveal-mask {
+      animation: mask-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 60%;
+    }
+  }
+}
+
+/* Graph paper for the authored sketches: faint sage grid on warm paper */
+.graph-paper {
+  background-color: #fffdf6;
+  background-image:
+    linear-gradient(rgb(59 93 80 / 0.09) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(59 93 80 / 0.09) 1px, transparent 1px);
+  background-size: 18px 18px;
+  background-position: -1px -1px;
+}
+
+/* Back cover: where the last page meets the cloth, a hairline page edge and a soft fall of shadow */
+.back-cover {
+  box-shadow:
+    inset 0 1px 0 rgb(255 253 248 / 0.14),
+    inset 0 18px 30px -24px rgb(0 0 0 / 0.55);
+}
+/* A mark pressed into the board, not printed on it */
+.deboss {
+  filter: drop-shadow(0 -1px 0 rgb(0 0 0 / 0.8)) drop-shadow(0 1px 0 rgb(255 255 255 / 0.5));
+}
+
+/* The footer continues the back cover's cloth without restarting its top light */
+.cloth-flat {
+  background-image:
+    repeating-linear-gradient(0deg, rgb(255 255 255 / 0.018) 0 1px, transparent 1px 3px),
+    repeating-linear-gradient(90deg, rgb(0 0 0 / 0.035) 0 1px, transparent 1px 3px);
+}
